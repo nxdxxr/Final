@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitZone Management - ระบบข้อมูลฟิตเนสและการออกกำลังกาย</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-name">FitZone <span>Network</span></span>
+      </div>
+      <nav class="nav-links">
+        <a href="#gyms-section" class="nav-link active" data-tab="gyms">สาขาฟิตเนส</a>
+        <a href="#classes-section" class="nav-link" data-tab="classes">ตารางคลาสออกกำลังกาย</a>
+        <a href="#my-bookings-section" class="nav-link" data-tab="my-bookings">คลาสของฉัน (My Bookings)</a>
+        <a href="#members-section" class="nav-link" data-tab="members">สมัครสมาชิก (Staff)</a>
+        <a href="/api-docs" target="_blank" class="nav-link badge-link">Swagger Docs ↗</a>
+      </nav>
+      <div class="status-indicator">
+        <span class="status-dot"></span>
+        <span id="api-status">API เชื่อมต่อปกติ</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="hero-tag">Pno: 9 | รหัสนิสิต: 67160178</span>
+      <h1 class="hero-title">ระบบบริหารจัดการฟิตเนสและคลาสออกกำลังกาย</h1>
+      <p class="hero-subtitle">
+        แพลตฟอร์มรวมข้อมูลสาขาฟิตเนส ตรวจสอบสภาพอากาศแบบ Real-time ด้วย External API
+        พร้อมระบบจองคลาสด้วย Database Transaction ป้องกันปัญหาที่นั่งซ้ำซ้อน
+      </p>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <span class="stat-number" id="stat-gyms">4</span>
+          <span class="stat-label">สาขาให้บริการ</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="stat-classes">4</span>
+          <span class="stat-label">คลาสออกกำลังกาย</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="stat-members">4</span>
+          <span class="stat-label">สมาชิกที่ลงทะเบียน</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="main-container">
+
+    <!-- Section 1: Gym Branches -->
+    <section id="gyms-section" class="content-section active">
+      <div class="section-header">
+        <div>
+          <h2>🏢 สาขาฟิตเนสและสภาพอากาศสด</h2>
+          <p class="section-desc">ข้อมูลสาขา ค่าบริการรายเดือน และรายงานสภาพอากาศภายนอกจาก Open-Meteo API</p>
+        </div>
+        <div class="filter-box">
+          <input type="text" id="gym-search" placeholder="ค้นหาชื่อสาขา หรือที่อยู่..." autocomplete="off">
+          <select id="gym-fee-filter">
+            <option value="">ค่าบริการทั้งหมด</option>
+            <option value="1500">ไม่เกิน 1,500 บาท/เดือน</option>
+            <option value="2000">ไม่เกิน 2,000 บาท/เดือน</option>
+          </select>
+          <button id="btn-refresh-gyms" class="btn btn-secondary">รีเฟรชข้อมูล</button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="gyms-loading" class="loading-state hidden">
+        <div class="spinner"></div>
+        <p>กำลังดึงข้อมูลสาขาฟิตเนสและสภาพอากาศจาก External API...</p>
+      </div>
+
+      <!-- Error State -->
+      <div id="gyms-error" class="error-banner hidden">
+        <span class="error-icon">⚠️</span>
+        <div class="error-text">
+          <h4 id="gyms-error-title">เกิดข้อผิดพลาดในการโหลดข้อมูล</h4>
+          <p id="gyms-error-msg"></p>
+        </div>
+        <button onclick="loadGyms()" class="btn btn-sm btn-outline">ลองใหม่</button>
+      </div>
+
+      <!-- Gym Grid -->
+      <div id="gym-cards-grid" class="cards-grid"></div>
+    </section>
+
+    <!-- Section 2: Fitness Classes -->
+    <section id="classes-section" class="content-section">
+      <div class="section-header">
+        <div>
+          <h2>🏋️ ตารางคลาสออกกำลังกายและการสำรองที่นั่ง</h2>
+          <p class="section-desc">จองคลาสออกกำลังกายกับเทรนเนอร์ผู้เชี่ยวชาญ (ปลอดภัยด้วย Concurrency Control)</p>
+        </div>
+        <button id="btn-refresh-classes" class="btn btn-secondary">รีเฟรชคลาส</button>
+      </div>
+
+      <!-- Loading State -->
+      <div id="classes-loading" class="loading-state hidden">
+        <div class="spinner"></div>
+        <p>กำลังตรวจสอบตารางคลาสและจำนวนที่นั่งคงเหลือ...</p>
+      </div>
+
+      <!-- Classes Grid -->
+      <div id="class-cards-grid" class="cards-grid"></div>
+    </section>
+
+    <!-- Section 3: My Bookings (คลาสที่ฉันจองไว้) -->
+    <section id="my-bookings-section" class="content-section">
+      <div class="section-header">
+        <div>
+          <h2>📅 คลาสของฉัน (My Bookings)</h2>
+          <p class="section-subtitle">ตรวจสอบตารางคลาสออกกำลังกายที่คุณได้ลงทะเบียนไว้ พร้อมฟังก์ชันยกเลิกการจอง</p>
+        </div>
+        <div class="filter-bar" style="margin-bottom:0; flex-wrap:wrap;">
+          <div class="filter-group">
+            <label for="my-bookings-member-select">เลือกรหัสสมาชิก:</label>
+            <select id="my-bookings-member-select" style="min-width: 220px;">
+              <option value="">-- กำลังโหลดสมาชิก --</option>
+            </select>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="btn-refresh-my-bookings">🔄 รีเฟรช</button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="my-bookings-loading" class="loading-state hidden">
+        <div class="spinner"></div>
+        <p>กำลังดึงข้อมูลประวัติการจองคลาส...</p>
+      </div>
+
+      <!-- Bookings Grid -->
+      <div id="my-bookings-grid" class="cards-grid"></div>
+    </section>
+
+    <!-- Section 4: Member Registration (Staff Console) -->
+    <section id="members-section" class="content-section">
+      <div class="member-layout">
+        <div class="form-card">
+          <div class="form-header">
+            <h3>📝 สมัครสมาชิกใหม่ (Member Registration)</h3>
+            <p>กรอกข้อมูลเพื่อลงทะเบียนเข้าสู่ระบบฟิตเนส</p>
+          </div>
+          <form id="member-register-form" novalidate>
+            <div class="form-group">
+              <label for="reg-name">ชื่อ - นามสกุล <span class="required">*</span></label>
+              <input type="text" id="reg-name" placeholder="เช่น นายสมคิด สุขใจ" required>
+              <span class="input-error" id="err-name"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-email">อีเมล (ต้องไม่ซ้ำในระบบ) <span class="required">*</span></label>
+              <input type="email" id="reg-email" placeholder="example@domain.com" required>
+              <span class="input-error" id="err-email"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-phone">เบอร์โทรศัพท์ <span class="required">*</span></label>
+              <input type="tel" id="reg-phone" placeholder="08x-xxx-xxxx" required>
+              <span class="input-error" id="err-phone"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-gym">สาขาหลักที่ต้องการสมัคร <span class="required">*</span></label>
+              <select id="reg-gym" required>
+                <option value="">-- กรุณาเลือกสาขา --</option>
+              </select>
+              <span class="input-error" id="err-gym"></span>
+            </div>
+
+            <button type="submit" id="btn-submit-member" class="btn btn-primary btn-block">
+              <span class="btn-text">ยืนยันการสมัครสมาชิก</span>
+              <span class="btn-spinner hidden"></span>
+            </button>
+          </form>
+        </div>
+
+        <div class="list-card">
+          <div class="list-header">
+            <h3>👥 รายชื่อสมาชิกในระบบล่าสุด</h3>
+            <span class="badge" id="member-count-badge">0 คน</span>
+          </div>
+          <div id="members-list-container" class="members-list"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Booking Modal Dialog -->
+  <div id="booking-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-class-title">จองคลาสออกกำลังกาย</h3>
+        <button class="modal-close" id="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="class-summary-box">
+          <div class="summary-row">
+            <span class="summary-label">คลาส:</span>
+            <span class="summary-value" id="modal-summary-name">-</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">เวลาเรียน:</span>
+            <span class="summary-value" id="modal-summary-time">-</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">ที่นั่งคงเหลือ:</span>
+            <span class="summary-badge" id="modal-summary-spots">0 ที่</span>
+          </div>
+        </div>
+
+        <form id="booking-form">
+          <input type="hidden" id="modal-class-id">
+          <div class="form-group">
+            <label for="booking-member-select">เลือกสมาชิกที่ต้องการจองคลาส <span class="required">*</span></label>
+            <select id="booking-member-select" required>
+              <option value="">-- กรุณาเลือกสมาชิก --</option>
+            </select>
+            <span class="input-error" id="err-booking-member"></span>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" id="btn-cancel-modal">ยกเลิก</button>
+            <button type="submit" class="btn btn-primary" id="btn-confirm-booking">
+              <span class="btn-text">ยืนยันการจอง</span>
+              <span class="btn-spinner hidden"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>FitZone Backend API & Client-Facing Frontend | วิชา Backend Web Service Development | รหัสนิสิต 67160178</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

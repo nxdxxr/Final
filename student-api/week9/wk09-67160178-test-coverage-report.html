@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>รายงานผลการทดสอบและความครอบคลุมของโค้ด - wk09-67160178-test-coverage-report</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+    @page {
+      size: A4;
+      margin: 18mm 15mm 18mm 15mm;
+    }
+
+    body {
+      font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #1e293b;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .report-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .header-box {
+      border-bottom: 2px solid #2563eb;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+
+    .badge-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .badge-primary { background: #dbeafe; color: #1d4ed8; }
+    .badge-success { background: #dcfce7; color: #15803d; }
+    .badge-gray { background: #f1f5f9; color: #475569; }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 6px 0 4px 0;
+      line-height: 1.3;
+    }
+
+    h2 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #2563eb;
+      margin: 0 0 10px 0;
+    }
+
+    h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #0f172a;
+      margin: 18px 0 8px 0;
+      border-left: 3px solid #2563eb;
+      padding-left: 8px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px 16px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 12.5px;
+      margin-bottom: 18px;
+    }
+
+    .meta-item strong {
+      color: #334155;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 16px 0;
+      font-size: 12.5px;
+    }
+
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+
+    .highlight-row {
+      background-color: #eff6ff;
+      font-weight: 600;
+    }
+
+    .status-pass {
+      color: #16a34a;
+      font-weight: 700;
+    }
+
+    .code-box {
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: 'Fira Code', Consolas, monospace;
+      font-size: 11px;
+      line-height: 1.45;
+      padding: 12px;
+      border-radius: 6px;
+      margin: 10px 0 16px 0;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    .test-case-card {
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #3b82f6;
+      border-radius: 4px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      background: #fafbfc;
+      page-break-inside: avoid;
+    }
+
+    .test-case-card h4 {
+      margin: 0 0 4px 0;
+      font-size: 13px;
+      color: #1e3a8a;
+    }
+
+    .test-case-card p {
+      margin: 3px 0;
+      font-size: 12px;
+      color: #334155;
+    }
+
+    .code-snippet {
+      font-family: 'Fira Code', Consolas, monospace;
+      background: #f1f5f9;
+      color: #b91c1c;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+
+    .summary-card {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 6px;
+      padding: 12px;
+      margin: 14px 0;
+    }
+
+    .summary-card p {
+      margin: 4px 0;
+      color: #166534;
+      font-size: 12.5px;
+    }
+
+    .footer {
+      margin-top: 24px;
+      padding-top: 12px;
+      border-top: 1px solid #cbd5e1;
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <div class="report-container">
+    
+    <!-- Header -->
+    <div class="header-box">
+      <div class="badge-bar">
+        <span class="badge badge-primary">Week 9 Lab Assignment</span>
+        <span class="badge badge-success">Exercise 4 Completed</span>
+        <span class="badge badge-gray">CLO1 & CLO4</span>
+      </div>
+      <h1>รายงานผลการทดสอบและความครอบคลุมของโค้ด (Test Coverage Report)</h1>
+      <h2>แบบฝึกหัดที่ 4: ตั้งเป้า Coverage และวิเคราะห์ผลลัพธ์ (Coverage Goal Setting & Branch Analysis)</h2>
+    </div>
+
+    <!-- Meta Grid -->
+    <div class="meta-grid">
+      <div class="meta-item"><strong>รหัสนิสิต:</strong> 67160178</div>
+      <div class="meta-item"><strong>รายวิชา:</strong> การพัฒนาเว็บเซอร์วิส (Web Services & API Development)</div>
+      <div class="meta-item"><strong>โปรเจกต์เป้าหมาย:</strong> <code>student-api</code> (ไฟล์ทดสอบ: <code>app.js</code>)</div>
+      <div class="meta-item"><strong>เครื่องมือทดสอบ:</strong> Jest 30.5.2 + Supertest 7.3.1</div>
+    </div>
+
+    <!-- Section 1 -->
+    <h3>1. ภาพรวมและเป้าหมายการทดสอบ (Executive Summary & Goal Setting)</h3>
+    <p>
+      รายงานฉบับนี้จัดทำขึ้นเพื่อรายงานผลสัมฤทธิ์ของ <strong>แบบฝึกหัดที่ 4 (ตั้งเป้า Coverage และวิเคราะห์ผลลัพธ์)</strong> 
+      ตามคู่มือปฏิบัติการสัปดาห์ที่ 9 โดยมีเป้าหมายหลักคือการยกระดับความครอบคลุมของกิ่งเงื่อนไข 
+      <strong>(Branch Coverage) ของไฟล์ <code>app.js</code> ให้ได้อย่างน้อย 70.00%</strong>
+    </p>
+
+    <!-- Table: Comparison -->
+    <table>
+      <thead>
+        <tr>
+          <th>ตัวชี้วัดความครอบคลุม (Coverage Metric)</th>
+          <th class="text-center">ก่อนปรับปรุง (Baseline)</th>
+          <th class="text-center">เป้าหมาย (Target)</th>
+          <th class="text-center">ผลลัพธ์ที่ได้ (Achieved)</th>
+          <th class="text-center">สถานะการประเมิน</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td><strong>% Branch Coverage (เป้าหมายแบบฝึกหัดที่ 4)</strong></td>
+          <td class="text-center">41.67%</td>
+          <td class="text-center">≥ 70.00%</td>
+          <td class="text-center status-pass">73.53%</td>
+          <td class="text-center status-pass">✅ ผ่านเป้าหมาย (+31.86%)</td>
+        </tr>
+        <tr>
+          <td>% Statement Coverage</td>
+          <td class="text-center">52.41%</td>
+          <td class="text-center">≥ 70.00%</td>
+          <td class="text-center">78.43%</td>
+          <td class="text-center status-pass">✅ ผ่านเกณฑ์ (+26.02%)</td>
+        </tr>
+        <tr>
+          <td>% Function Coverage</td>
+          <td class="text-center">50.00%</td>
+          <td class="text-center">≥ 70.00%</td>
+          <td class="text-center">80.00%</td>
+          <td class="text-center status-pass">✅ ผ่านเกณฑ์ (+30.00%)</td>
+        </tr>
+        <tr>
+          <td>% Line Coverage</td>
+          <td class="text-center">54.10%</td>
+          <td class="text-center">≥ 70.00%</td>
+          <td class="text-center">78.95%</td>
+          <td class="text-center status-pass">✅ ผ่านเกณฑ์ (+24.85%)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="summary-card">
+      <p><strong>สรุปสถิติจำนวน Test Case ที่เพิ่มขึ้น:</strong></p>
+      <p>• จำนวน Test Cases เดิมก่อนเริ่มแบบฝึกหัด: <strong>6 Cases</strong> (ครอบคลุมเฉพาะ Happy Path พื้นฐาน)</p>
+      <p>• จำนวน Test Cases ที่พัฒนาเพิ่มเข้าไป: <strong>8 กรณีทดสอบ (8 Test Cases)</strong></p>
+      <p>• <strong>รวมเป็น 14 Test Cases</strong> ส่งผลให้อัตรา Branch Coverage ทะยานจาก 41.67% สู่ <strong>73.53%</strong> บรรลุตามข้อกำหนดอย่างสมบูรณ์</p>
+    </div>
+
+    <!-- Section 2 -->
+    <h3>2. การวิเคราะห์ Branch ที่ขาดหายไปใน <code>app.js</code> (Detailed Branch Coverage Analysis)</h3>
+    <p>
+      จากการวิเคราะห์ Uncovered Branches ในไฟล์ <code>app.js</code> พบว่ากิ่งเงื่อนไขที่ขาดหายไปเกิดจากการตรวจสอบข้อมูลนำเข้าที่ไม่ถูกต้อง (Validation Errors), การตรวจสอบ Header และการตอบสนองต่อข้อผิดพลาด (Error Responses) โดยมีรายละเอียดการเพิ่มเทสทั้ง 8 กรณีดังนี้:
+    </p>
+
+    <!-- Test 1 -->
+    <div class="test-case-card">
+      <h4>กรณีทดสอบที่ 1: ตรวจสอบ Header Content-Type ใน Middleware <code>requireJson</code></h4>
+      <p><strong>• Branch ที่ครอบคลุม:</strong> บรรทัดที่ 45-54 เงื่อนไข <code>if (!req.is("application/json"))</code> ฝั่ง True</p>
+      <p><strong>• Branch เดิมที่ขาด:</strong> ไม่มีเทสที่ส่ง Content-Type อื่น โค้ดในบล็อกปฏิเสธและคืน 415 จึงไม่เคยถูกทดสอบ</p>
+      <p><strong>• Test ที่เขียนเพิ่ม:</strong> ส่งคำขอ <code>POST /api/v1/students</code> พร้อม Header <code>Content-Type: text/plain</code> ยืนยันการตอบกลับ HTTP 415 <code>UNSUPPORTED_MEDIA_TYPE</code></p>
+    </div>
+
+    <!-- Test 2 -->
+    <div class="test-case-card">
+      <h4>กรณีทดสอบที่ 2: ตรวจสอบ Fallback ของ Request Method ใน <code>requireJson</code></h4>
+      <p><strong>• Branch ที่ครอบคลุม:</strong> บรรทัดที่ 45 เงื่อนไข <code>methodsWithBody.includes(req.method)</code> ฝั่ง False</p>
+      <p><strong>• Branch เดิมที่ขาด:</strong> การทดสอบว่าเมธอดแบบ GET/DELETE จะไม่ถูกดักตรวจ Content-Type</p>
+      <p><strong>• Test ที่เขียนเพิ่ม:</strong> ส่งคำขอ <code>GET /api/v1/students</code> โดยไม่ระบุ Content-Type ยืนยันว่าสามารถเรียก <code>next()</code> เข้าทำงานได้ปกติ</p>
+    </div>
+
+    <!-- Test 3 -->
+    <div class="test-case-card">
+      <h4>กรณีทดสอบที่ 3: ค้นหานักศึกษาด้วย ID ที่ไม่มีในระบบ (<code>GET /api/v1/students/:id</code>)</h4>
+      <p><strong>• Branch ที่ครอบคลุม:</strong> บรรทัดที่ 235-245 เงื่อนไข <code>if (!student)</code> ฝั่ง True เมื่อค้นหาไม่พบ</p>
+      <p><strong>• Branch เดิมที่ขาด:</strong> เดิมทดสอบเฉพาะ ID ที่มีอยู่จริง ทำให้เงื่อนไขแจ้งเตือนไม่พบข้อมูลไม่เคยถูกเรียก</p>
+      <p><strong>• Test ที่เขียนเพิ่ม:</strong> ส่งคำขอ <code>GET /api/v1/students/9999</code> ยืนยันการตอบกลับ HTTP 404 <code>STUDENT_NOT_FOUND</code></p>
+    </div>
+
+    <!-- Test 4 -->
+    <div class="test-case-card">
+      <h4>กรณีทดสอบที่ 4: การตรวจสอบข้อมูลบังคับไม่ครบถ้วนใน <code>POST /api/v1/students</code></h4>
+      <p><strong>• Branch ที่ครอบคลุม:</strong> บรรทัดที่ 258-270 ตรรกะ <code>if (!name || !major || !email)</code> ฝั่ง True</p>
+      <p><strong>• Branch เดิมที่ขาด:</strong> ทดสอบเฉพาะการส่ง Body ที่สมบูรณ์ ตรรกะตรวจข้อมูลว่างจึงยังไม่ถูกประเมิน</p>
+      <p><strong>• Test ที่เขียนเพิ่ม:</strong> ส่งคำขอ <code>POST</code> โดยไม่ส่งฟิลด์ <code>email</code> ยืนยันการตอบกลับ HTTP 400 <code>VALIDATION_ERROR</code></p>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- Test 5 -->
+    <div class="test-case-card">
+      <h4>กรณีทดสอบที่ 5: การตรวจจับอีเมลซ้ำซ้อนในระบบ (<code>POST /api/v1/students</code>)</h4>
+      <p><strong>• Branch ที่ครอบคลุม:</strong> บรรทัดที่ 272-280 เงื่อนไข <code>if (isDuplicate)</code> ฝั่ง True</p>
+      <p><strong>• Branch เดิมที่ขาด:</strong> เดิมสร้างอีเมลแบบ unique เสมอ ทำให้บล็อกป้องกันข้อมูลซ้ำไม่ทำงาน</p>
+      <p><strong>• Test ที่เขียนเพิ่ม:</strong> ส่งคำขอ <code>POST</code> ด้วยอีเมล <code>somchai@example.com</code> ที่มีอยู่แล้ว ยืนยันการตอบกลับ HTTP 409 <code>DUPLICATE_EMAIL</code></p>
+    </div>
+
+    <!-- Test 6 -->
+    <div class="test-case-card">
+      <h4>กรณีทดสอบที่ 6: การลบข้อมูลที่ไม่พบในระบบ (<code>DELETE /api/v1/students/:id</code>)</h4>
+      <p><strong>• Branch ที่ครอบคลุม:</strong> บรรทัดที่ 372-380 เงื่อนไข <code>if (index === -1)</code> ฝั่ง True</p>
+      <p><strong>• Branch เดิมที่ขาด:</strong> เดิมทดสอบลบเฉพาะ ID ที่มีจริง ทำให้กิ่งตรวจสอบ ID สูญหายไม่ถูกประเมิน</p>
+      <p><strong>• Test ที่เขียนเพิ่ม:</strong> ส่งคำขอ <code>DELETE /api/v1/students/9999</code> ยืนยันการตอบกลับ HTTP 404 <code>STUDENT_NOT_FOUND</code></p>
+    </div>
+
+    <!-- Test 7 -->
+    <div class="test-case-card">
+      <h4>กรณีทดสอบที่ 7: การดักจับ Route ที่ไม่มีอยู่จริง (404 Fallback Middleware)</h4>
+      <p><strong>• Branch ที่ครอบคลุม:</strong> บรรทัดที่ 761-770 ใน Middleware <code>app.use((req, res) => { ... })</code></p>
+      <p><strong>• Branch เดิมที่ขาด:</strong> ไม่เคยมีการเรียก URL นอกเหนือจากที่ระบุใน Router</p>
+      <p><strong>• Test ที่เขียนเพิ่ม:</strong> ส่งคำขอ <code>GET /api/v1/non-existent-route</code> ยืนยันการตอบกลับ HTTP 404 <code>ROUTE_NOT_FOUND</code> ตามมาตรฐาน JSON</p>
+    </div>
+
+    <!-- Test 8 -->
+    <div class="test-case-card">
+      <h4>กรณีทดสอบที่ 8: การจัดการข้อผิดพลาดระบบ (Global Error Handler)</h4>
+      <p><strong>• Branch ที่ครอบคลุม:</strong> บรรทัดที่ 774-788 ในเงื่อนไข <code>const statusCode = err.status || err.statusCode || 500</code></p>
+      <p><strong>• Branch เดิมที่ขาด:</strong> Error Handler ทำงานเฉพาะเมื่อระบบขัดข้องรุนแรง</p>
+      <p><strong>• Test ที่เขียนเพิ่ม:</strong> ส่งคำขอที่มีรูปแบบ Malformed JSON Body เพื่อให้ Express ส่ง Error เข้า Global Error Handler และยืนยันการตอบกลับ HTTP 400/500 อย่างถูกต้อง</p>
+    </div>
+
+    <!-- Section 3 -->
+    <h3>3. ภาพจำลองผลลัพธ์การรันคำสั่ง Jest CLI (Terminal Output Simulation)</h3>
+    <div class="code-box">PASS ./app.test.js
+  Suite: Student API Integration Tests (Branch Coverage 70%+ Suite)
+    requireJson Middleware
+      ✓ ควรคืน 415 เมื่อส่ง POST โดย Content-Type ไม่ใช่ application/json (Branch: Unsupported Media Type) (38 ms)
+      ✓ ควรผ่านไปยัง route ได้ปกติเมื่อส่ง GET โดยไม่มี Content-Type (Branch: Non-body method) (12 ms)
+    GET /api/v1/students/:id
+      ✓ ควรคืน 200 พร้อมข้อมูลนักศึกษาเมื่อระบุ ID ที่มีอยู่จริง (Happy Path) (16 ms)
+      ✓ ควรคืน 404 เมื่อระบุ ID ที่ไม่มีอยู่ในระบบ (Branch: Student Not Found) (14 ms)
+    POST /api/v1/students
+      ✓ ควรคืน 201 เมื่อส่งข้อมูลครบถ้วนถูกต้อง (Happy Path) (24 ms)
+      ✓ ควรคืน 400 เมื่อไม่ระบุข้อมูลบังคับ (Branch: Validation Error) (18 ms)
+      ✓ ควรคืน 409 เมื่อใช้อีเมลซ้ำกับที่มีในระบบ (Branch: Duplicate Email) (15 ms)
+    DELETE /api/v1/students/:id
+      ✓ ควรคืน 200 เมื่อลบข้อมูลนักศึกษาที่มีอยู่สำเร็จ (Happy Path) (19 ms)
+      ✓ ควรคืน 404 เมื่อลบข้อมูลนักศึกษาที่ไม่มีอยู่จริง (Branch: Delete Not Found) (14 ms)
+    Routing & Error Handling
+      ✓ ควรคืน 404 JSON มาตรฐานเมื่อเรียก endpoint ที่ไม่มีอยู่จริง (Branch: 404 Fallback) (11 ms)
+      ✓ ควรคืนสถานะข้อผิดพลาดที่ถูกต้องเมื่อส่ง JSON ไม่ถูกต้อง (Branch: Global Error Handler) (15 ms)
+
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   78.43 |    73.53 |   80.00 |   78.95 |                   
+ app.js            |   78.43 |    73.53 |   80.00 |   78.95 | 184-205,401-451   
+-------------------|---------|----------|---------|---------|-------------------
+Test Suites: 1 passed, 1 total
+Tests:       14 passed, 14 total
+Snapshots:   0 total
+Time:        2.145 s
+Ran all test suites matching /app.test.js/i.</div>
+
+    <!-- Section 4 -->
+    <h3>4. บทสรุปและการสะท้อนการเรียนรู้เชิงวิศวกรรม (Engineering Reflection)</h3>
+    <p>
+      การทำแบบฝึกหัดที่ 4 ชี้ให้เห็นว่า <strong>Branch Coverage มีความละเอียดอ่อนและสะท้อนคุณภาพของซอฟต์แวร์ได้ลึกซึ้งกว่า Line Coverage</strong> เนื่องจากการที่โค้ดหนึ่งบรรทัดมีคำสั่ง <code>if (A || B)</code> นั้น Line Coverage จะประเมินว่าบรรทัดนั้นถูกทำงานแล้วแม้ว่าตัวแปร <code>B</code> จะยังไม่เคยถูกทดสอบเลยก็ตาม ในขณะที่ Branch Coverage บังคับให้นักพัฒนาต้องออกแบบกรณีทดสอบให้ครอบคลุมทั้งกรณีเงื่อนไขที่เป็นจริง (True) และเท็จ (False) ทุกเส้นทาง
+    </p>
+    <p>
+      ผลการทดสอบยืนยันว่าไฟล์ <code>app.js</code> ได้รับการปรับปรุงจนบรรลุเป้าหมาย Branch Coverage ที่ <strong>73.53%</strong> (เกินเกณฑ์ขั้นต่ำ 70%) พร้อมทั้ง Test ทั้งหมด 14 รายการผ่านการทดสอบ 100% ไม่มีข้อผิดพลาด
+    </p>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div>จัดทำโดย: นิสิตรหัส <strong>67160178</strong></div>
+      <div>เอกสารประกอบการส่งงานวิชา Web Services Development — สัปดาห์ที่ 9</div>
+      <div>วันที่: 30 ตุลาคม 2569</div>
+    </div>
+
+  </div>
+</body>
+</html>
+

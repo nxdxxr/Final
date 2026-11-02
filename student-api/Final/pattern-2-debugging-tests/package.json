@@ -1,0 +1,13 @@
+{
+  "name": "final-exam-pattern-2",
+  "version": "1.0.0",
+  "private": true,
+  "description": "แนวข้อสอบปฏิบัติปลายภาค รูปแบบที่ 2: Debugging Pagination, Middleware & Testing Transaction",
+  "scripts": {
+    "test": "jest tests/pattern2.test.js"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}
+

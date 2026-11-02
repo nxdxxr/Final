@@ -1,0 +1,30 @@
+{
+  "name": "project-phase1-67160178-9",
+  "version": "1.0.0",
+  "description": "Fitness & Gym Management System (Pno: 9) - Project Phase 1",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "gym",
+    "fitness",
+    "api",
+    "express",
+    "mysql"
+  ],
+  "author": "67160178",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.12.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

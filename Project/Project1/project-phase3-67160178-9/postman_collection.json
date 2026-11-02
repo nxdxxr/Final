@@ -1,0 +1,223 @@
+{
+  "info": {
+    "_postman_id": "c7160178-phase2-fitness-api-collection",
+    "name": "Fitness & Gym Management API (Phase 2)",
+    "description": "Postman Collection สำหรับทดสอบ API ระบบข้อมูลฟิตเนส (Pno: 9) รหัสนิสิต: 67160178 ครอบคลุม CRUD, Transaction และ External Weather API Resilience",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Gyms",
+      "item": [
+        {
+          "name": "GET All Gyms (ดึงรายชื่อฟิตเนสทั้งหมด)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/gyms",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "gyms"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Gyms by Filter (กรองตามค่าบริการรายเดือน)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/gyms?max_fee=1600",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "gyms"],
+              "query": [
+                { "key": "max_fee", "value": "1600" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Gym by ID (ดึงข้อมูลฟิตเนสรายแห่ง)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/gyms/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "gyms", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Gym Classes (ดึงคลาสของสาขาพร้อม JOIN เทรนเนอร์)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/gyms/1/classes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "gyms", "1", "classes"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. External API Resilience",
+      "item": [
+        {
+          "name": "GET Gym Weather - Normal (สภาพอากาศปกติ 200 OK)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/gyms/1/weather",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "gyms", "1", "weather"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Gym Weather - Simulate Network Error (จำลองเน็ตเวิร์กล่ม -> Retry -> Fallback)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/gyms/1/weather?simulate=network",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "gyms", "1", "weather"],
+              "query": [
+                { "key": "simulate", "value": "network" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Gym Weather - Simulate Timeout (จำลองดีเลย์เกิน 3 วินาที -> Timeout -> Fallback)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/gyms/1/weather?simulate=timeout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "gyms", "1", "weather"],
+              "query": [
+                { "key": "simulate", "value": "timeout" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Gym Weather - Simulate 500 Error (จำลอง Server 500 -> Retry -> Fallback)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/gyms/1/weather?simulate=500",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "gyms", "1", "weather"],
+              "query": [
+                { "key": "simulate", "value": "500" }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Classes & Bookings",
+      "item": [
+        {
+          "name": "GET All Classes (ดึงรายการคลาสทั้งหมด)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/classes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "classes"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Book Class (จองคลาสด้วย Database Transaction)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"memberId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/classes/2/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "classes", "2", "bookings"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Members",
+      "item": [
+        {
+          "name": "GET All Members (ดึงรายชื่อสมาชิกทั้งหมด)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/members",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "members"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Register Member (ลงทะเบียนสมาชิกใหม่)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"นายอนุชา วิ่งเร็ว\",\n  \"email\": \"anucha@example.com\",\n  \"phone\": \"089-999-8877\",\n  \"gymId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/members",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "members"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,650 @@
+openapi: 3.0.3
+info:
+  title: Fitness & Gym Management API
+  version: 1.0.0
+  description: |
+    ระบบ Backend API สำหรับบริหารจัดการข้อมูลฟิตเนส คลาสออกกำลังกาย สมาชิก และการจองคลาส
+    (โจทย์ Pno: 9 - gyms | รหัสนิสิต: 67160178)
+    พร้อมระบบเชื่อมต่อ External Weather API ที่มีกลไก Retry, Timeout, และ Fallback
+servers:
+  - url: http://localhost:3000
+    description: Local Development Server
+
+tags:
+  - name: Gyms
+    description: จัดการข้อมูลสาขาฟิตเนส (Resource หลักตามโจทย์ Pno: 9)
+  - name: Classes
+    description: จัดการตารางคลาสออกกำลังกาย และการจองคลาส
+  - name: Members
+    description: จัดการข้อมูลสมาชิกฟิตเนส
+  - name: Integration
+    description: การเชื่อมต่อ API ภายนอกอย่างทนทาน (External API & Resilience)
+
+paths:
+  /api/v1/gyms:
+    get:
+      tags:
+        - Gyms
+      summary: ดึงรายชื่อฟิตเนสทั้งหมด
+      description: เรียกดูรายชื่อสาขาฟิตเนสทั้งหมด พร้อมรองรับการค้นหาตามชื่อ/ที่อยู่ หรือช่วงราคาค่าบริการรายเดือน
+      parameters:
+        - name: search
+          in: query
+          required: false
+          description: คำค้นหาชื่อสาขาหรือที่ตั้ง
+          schema:
+            type: string
+            example: สยาม
+        - name: max_fee
+          in: query
+          required: false
+          description: กรองอัตราค่าบริการรายเดือนสูงสุด
+          schema:
+            type: number
+            example: 1600
+      responses:
+        '200':
+          description: ดึงข้อมูลสำเร็จ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: ดึงข้อมูลฟิตเนสสำเร็จ
+                  count:
+                    type: integer
+                    example: 2
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Gym'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/gyms/{id}:
+    get:
+      tags:
+        - Gyms
+      summary: ดึงข้อมูลฟิตเนสรายแห่งตาม ID
+      description: เรียกดูข้อมูลรายละเอียดของฟิตเนสสาขาที่ระบุ
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: รหัสของสาขาฟิตเนส
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: พบข้อมูลฟิตเนส
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: ดึงข้อมูลฟิตเนสสำเร็จ
+                  data:
+                    $ref: '#/components/schemas/Gym'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/gyms/{id}/classes:
+    get:
+      tags:
+        - Gyms
+        - Classes
+      summary: ดึงตารางคลาสออกกำลังกายของสาขาที่ระบุ
+      description: ดึงข้อมูลคลาสออกกำลังกายพร้อมข้อมูลเทรนเนอร์ผู้สอนผ่านการ JOIN ตาราง
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: รหัสของสาขาฟิตเนส
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: ดึงข้อมูลคลาสสำเร็จ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: ดึงข้อมูลคลาสออกกำลังกายของสาขาสำเร็จ
+                  gym:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: FitZone สยามสแควร์
+                  count:
+                    type: integer
+                    example: 2
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ClassWithTrainer'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/gyms/{id}/weather:
+    get:
+      tags:
+        - Integration
+      summary: ดึงข้อมูลสภาพอากาศภายนอกสำหรับสาขา (Resilience: Retry/Timeout/Fallback)
+      description: |
+        เรียกใช้ External Open-Meteo Weather API โดยมีระบบความทนทาน:
+        - Timeout สูงสุด 3 วินาที
+        - Retry อัตโนมัติ 2 ครั้ง พร้อม Exponential Backoff
+        - Fallback ตอบกลับค่าที่ปลอดภัยหาก API ภายนอกล้มเหลว
+        รองรับ Query Parameter สำหรับจำลองสถานการณ์ความผิดพลาด (?simulate=network, ?simulate=timeout, ?simulate=500)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: รหัสของสาขาฟิตเนส
+          schema:
+            type: integer
+            example: 1
+        - name: simulate
+          in: query
+          required: false
+          description: จำลองสถานการณ์ทดสอบ (network, timeout, 500)
+          schema:
+            type: string
+            enum: [network, timeout, '500']
+      responses:
+        '200':
+          description: ข้อมูลสภาพอากาศ (อาจเป็นข้อมูลสดหรือข้อมูลสำรอง fallback)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: ดึงข้อมูลสภาพอากาศสำเร็จ
+                  data:
+                    $ref: '#/components/schemas/WeatherData'
+                  resilience:
+                    type: object
+                    properties:
+                      attemptsUsed:
+                        type: integer
+                        example: 1
+                      isFallback:
+                        type: boolean
+                        example: false
+                      logs:
+                        type: array
+                        items:
+                          type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/classes:
+    get:
+      tags:
+        - Classes
+      summary: ดึงรายการคลาสออกกำลังกายทั้งหมดในระบบ
+      description: เรียกดูรายการคลาสทั้งหมดพร้อมชื่อสาขาและชื่อเทรนเนอร์
+      responses:
+        '200':
+          description: ดึงรายการคลาสสำเร็จ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: ดึงรายการคลาสออกกำลังกายทั้งหมดสำเร็จ
+                  count:
+                    type: integer
+                    example: 4
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ClassItem'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/classes/{id}/bookings:
+    post:
+      tags:
+        - Classes
+      summary: จองคลาสออกกำลังกาย (Transaction & Concurrency Control)
+      description: จองที่นั่งในคลาสออกกำลังกาย โดยใช้ Database Transaction ตัดที่นั่งคงเหลือ และป้องกันการจองซ้ำ
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: รหัสคลาสที่ต้องการจอง
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - memberId
+              properties:
+                memberId:
+                  type: integer
+                  example: 1
+      responses:
+        '201':
+          description: จองคลาสสำเร็จ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: จองคลาสออกกำลังกายสำเร็จ
+                  bookingId:
+                    type: integer
+                    example: 5
+                  classId:
+                    type: integer
+                    example: 1
+                  memberId:
+                    type: integer
+                    example: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: เกิดข้อขัดแย้ง (ที่นั่งเต็ม หรือจองซ้ำแล้ว)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                seatFull:
+                  summary: ที่นั่งเต็ม
+                  value:
+                    error:
+                      code: SEAT_FULL
+                      message: ที่นั่งในคลาสนี้เต็มแล้ว ไม่สามารถจองเพิ่มได้
+                alreadyBooked:
+                  summary: จองซ้ำ
+                  value:
+                    error:
+                      code: ALREADY_BOOKED
+                      message: สมาชิกท่านนี้ได้ทำการจองคลาสดังกล่าวไปแล้ว
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/members:
+    get:
+      tags:
+        - Members
+      summary: ดึงรายชื่อสมาชิกฟิตเนสทั้งหมด
+      description: เรียกดูรายการสมาชิกทั้งหมดพร้อมชื่อสาขาฟิตเนสที่สังกัด
+      responses:
+        '200':
+          description: ดึงข้อมูลสมาชิกสำเร็จ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: ดึงข้อมูลสมาชิกสำเร็จ
+                  count:
+                    type: integer
+                    example: 4
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Member'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - Members
+      summary: ลงทะเบียนสมาชิกฟิตเนสใหม่
+      description: บันทึกข้อมูลสมาชิกใหม่เข้าสู่ระบบ พร้อมตรวจสอบอีเมลไม่ให้ซ้ำกัน
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - phone
+                - gymId
+              properties:
+                name:
+                  type: string
+                  example: นายอนุชา วิ่งเร็ว
+                email:
+                  type: string
+                  format: email
+                  example: anucha@example.com
+                phone:
+                  type: string
+                  example: 089-999-8877
+                gymId:
+                  type: integer
+                  example: 1
+      responses:
+        '201':
+          description: สมัครสมาชิกสำเร็จ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: สมัครสมาชิกสำเร็จ
+                  data:
+                    $ref: '#/components/schemas/Member'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: อีเมลซ้ำในระบบ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  code: DUPLICATE_EMAIL
+                  message: อีเมลนี้ถูกใช้สมัครสมาชิกในระบบแล้ว
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/members/{id}/bookings:
+    get:
+      summary: ดึงรายการคลาสออกกำลังกายที่สมาชิกได้จองไว้ (My Bookings)
+      description: ดึงข้อมูลประวัติการจองคลาสทั้งหมดของสมาชิกคนดังกล่าว พร้อมชื่อคลาส วันเวลา และชื่อเทรนเนอร์
+      tags:
+        - Members
+        - Bookings
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: รหัสประจำตัวสมาชิก (Member ID)
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: ดึงรายการจองสำเร็จ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: ดึงรายการจองคลาสของสมาชิกสำเร็จ
+                  count:
+                    type: integer
+                    example: 2
+                  data:
+                    type: array
+                    items:
+                      type: object
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/bookings/{id}:
+    delete:
+      summary: ยกเลิกการจองคลาสออกกำลังกาย (คืนที่นั่งว่าง)
+      description: ยกเลิกการจองตามรหัส Booking ID และทำการคืนยอดที่นั่งว่าง (+1) กลับเข้าคลาสด้วย Database Transaction
+      tags:
+        - Bookings
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: รหัสการจอง (Booking ID)
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: ยกเลิกการจองสำเร็จและคืนที่นั่งเรียบร้อย
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: ยกเลิกการจองคลาสออกกำลังกายสำเร็จ และคืนที่นั่งว่างเรียบร้อยแล้ว
+                  cancelledBookingId:
+                    type: integer
+                    example: 1
+                  classId:
+                    type: integer
+                    example: 1
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    Gym:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: FitZone สยามสแควร์
+        address:
+          type: string
+          example: 999 ถนนพระราม 1 แขวงปทุมวัน เขตปทุมวัน กรุงเทพฯ 10330
+        phone:
+          type: string
+          example: 02-111-2233
+        monthly_fee:
+          type: string
+          example: "1590.00"
+        open_time:
+          type: string
+          example: "06:00:00"
+        close_time:
+          type: string
+          example: "22:00:00"
+        created_at:
+          type: string
+          format: date-time
+
+    ClassWithTrainer:
+      type: object
+      properties:
+        class_id:
+          type: integer
+          example: 1
+        class_name:
+          type: string
+          example: Power Kettlebell Circuit
+        schedule_time:
+          type: string
+          example: จันทร์และพุธ 18:00 - 19:00 น.
+        max_spots:
+          type: integer
+          example: 15
+        available_spots:
+          type: integer
+          example: 14
+        trainer_id:
+          type: integer
+          example: 1
+        trainer_name:
+          type: string
+          example: โค้ชก้อง ทศพล
+        trainer_specialty:
+          type: string
+          example: Strength & Conditioning
+
+    ClassItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        class_name:
+          type: string
+          example: Power Kettlebell Circuit
+        schedule_time:
+          type: string
+          example: จันทร์และพุธ 18:00 - 19:00 น.
+        max_spots:
+          type: integer
+          example: 15
+        available_spots:
+          type: integer
+          example: 14
+        gym_id:
+          type: integer
+          example: 1
+        gym_name:
+          type: string
+          example: FitZone สยามสแควร์
+        trainer_id:
+          type: integer
+          example: 1
+        trainer_name:
+          type: string
+          example: โค้ชก้อง ทศพล
+
+    Member:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        gym_id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: นายสมศักดิ์ สุขภาพดี
+        email:
+          type: string
+          example: somsak@example.com
+        phone:
+          type: string
+          example: 089-111-0001
+        membership_status:
+          type: string
+          example: active
+        created_at:
+          type: string
+          format: date-time
+
+    WeatherData:
+      type: object
+      properties:
+        gymId:
+          type: integer
+          example: 1
+        gymName:
+          type: string
+          example: FitZone สยามสแควร์
+        temperatureCelsius:
+          type: number
+          example: 31.5
+        relativeHumidity:
+          type: integer
+          example: 62
+        windSpeedKmh:
+          type: number
+          example: 9.8
+        weatherCondition:
+          type: string
+          example: อากาศปกติ เหมาะแก่การออกกำลังกาย
+        recommendation:
+          type: string
+          example: ระบบฟิตเนสพร้อมให้บริการคลาสตามตารางปกติ
+        isFallback:
+          type: boolean
+          example: false
+        fetchedAt:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: ERROR_CODE
+            message:
+              type: string
+              example: ข้อความอธิบายความผิดพลาด
+
+  responses:
+    BadRequest:
+      description: ข้อมูลที่ส่งมาไม่ถูกต้องหรือไม่ครบถ้วน (400)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: VALIDATION_ERROR
+              message: กรุณาระบุข้อมูลให้ครบถ้วนถูกต้อง
+
+    NotFound:
+      description: ไม่พบข้อมูลที่ระบุ (404)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: NOT_FOUND
+              message: ไม่พบทรัพยากรที่ร้องขอ
+
+    InternalServerError:
+      description: เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์ (500)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: INTERNAL_SERVER_ERROR
+              message: เกิดข้อผิดพลาดภายในระบบฐานข้อมูลหรือเซิร์ฟเวอร์

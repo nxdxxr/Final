@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>แนวข้อสอบปลายภาค</title>
+    <style>
+      :root {
+        --fg: #1f2328;
+        --bg: #ffffff;
+        --muted: #59636e;
+        --border: #d1d9e0;
+        --code: #f6f8fa;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --fg: #e6edf3;
+          --bg: #0d1117;
+          --muted: #9198a1;
+          --border: #3d444d;
+          --code: #161b22;
+        }
+      }
+      :root[data-theme="dark"] {
+        --fg: #e6edf3;
+        --bg: #0d1117;
+        --muted: #9198a1;
+        --border: #3d444d;
+        --code: #161b22;
+      }
+      body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        line-height: 1.7;
+        margin: 0;
+        padding: 16px;
+      }
+      main {
+        max-width: 860px;
+        margin: 0 auto;
+      }
+      h1 {
+        font-size: 1.7rem;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 0.3em;
+      }
+      h2 {
+        font-size: 1.35rem;
+        margin-top: 1.8em;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 0.25em;
+      }
+      h3 {
+        font-size: 1.1rem;
+        margin-top: 1.4em;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 1em 0;
+        display: block;
+        overflow-x: auto;
+      }
+      th,
+      td {
+        border: 1px solid var(--border);
+        padding: 6px 10px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: var(--code);
+      }
+      code {
+        background: var(--code);
+        padding: 0.1em 0.35em;
+        border-radius: 4px;
+        font-size: 0.92em;
+      }
+      pre {
+        background: var(--code);
+        padding: 12px;
+        border-radius: 6px;
+        overflow-x: auto;
+      }
+      pre code {
+        background: none;
+        padding: 0;
+      }
+      blockquote {
+        border-left: 4px solid var(--border);
+        margin: 1em 0;
+        padding: 0.2em 1em;
+        color: var(--muted);
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--border);
+        margin: 2em 0;
+      }
+      li {
+        margin: 0.2em 0;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>แนวข้อสอบปลายภาค 88736065 API for Back-End Development</h1>
+      <p>สำหรับนิสิตทุกคน อ่านให้ครบก่อนวันสอบ</p>
+      <h2>1. ข้อมูลทั่วไป</h2>
+      <ul>
+        <li>
+          <strong>วันสอบ:</strong> วันอังคารที่ 3 พฤศจิกายน 2569
+          (ตรวจวันและเวลาตามประกาศของคณะอีกครั้ง)
+        </li>
+        <li>
+          <strong>เวลาสอบ:</strong> 180 นาที ข้อสอบออกแบบให้ทำจริงประมาณ 2
+          ชั่วโมง เวลาที่เหลือไว้ทบทวน
+        </li>
+        <li><strong>คะแนนเต็ม:</strong> 30 คะแนน แบ่งเป็นสองส่วนดังนี้</li>
+      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th>ส่วน</th>
+            <th>รูปแบบ</th>
+            <th>คะแนน</th>
+            <th>เอกสารที่เปิดได้</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ส่วนที่ 1</td>
+            <td>ปรนัย 30 ข้อ ข้อละ 0.5 คะแนน</td>
+            <td>15</td>
+            <td>ไม่อนุญาต</td>
+          </tr>
+          <tr>
+            <td>ส่วนที่ 2</td>
+            <td>ปฏิบัติ Express + MySQL + Jest</td>
+            <td>15</td>
+            <td>เอกสารบรรยายและปฏิบัติการสัปดาห์ที่ 5–12 (open-book)</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        ข้อสอบทั้งสองส่วนไม่อนุญาตให้ใช้ AI ช่วยตอบหรือเขียนโค้ด
+        และห้ามคัดลอกโค้ดจากผู้อื่น
+      </p>
+      <h2>2. ส่วนที่ 1: ข้อสอบปรนัย (15 คะแนน)</h2>
+      <p>
+        ข้อสอบมี 30 ข้อ แต่ละข้อมีตัวเลือก 4 ข้อ
+        เลือกคำตอบที่ถูกต้องที่สุดเพียงข้อเดียว แล้ววงกลมตัวอักษรหน้าตัวเลือก
+        ไม่มีการหักคะแนนสำหรับคำตอบที่ผิด
+      </p>
+      <p>ข้อสอบครอบคลุมเนื้อหาสัปดาห์ที่ 9–14 แบ่งเป็น 6 กลุ่ม กลุ่มละ 5 ข้อ</p>
+      <p>
+        ให้ทบทวนจากเอกสารบรรยายต่อไปนี้: <code>wk09.md</code>,
+        <code>wk10.md</code>, <code>wk11.md</code>, <code>wk12.md</code>,
+        <code>wk13.md</code>, <code>wk14.md</code>
+      </p>
+      <p>
+        ข้อสอบเน้นความเข้าใจหลักการ ไม่ได้ให้เขียนระบบจากศูนย์
+        ควรอ่านแต่ละหัวข้อให้เข้าใจเหตุผลของแนวทาง ไม่ใช่ท่องคำนิยามอย่างเดียว
+      </p>
+      <h2>3. ส่วนที่ 2: ข้อสอบปฏิบัติ (15 คะแนน)</h2>
+      <h3>3.1 สถานการณ์</h3>
+      <p>
+        โปรเจกต์ระบบสั่งอาหารออนไลน์ที่ให้มาแล้ว เป็นโค้ด Express และ MySQL
+        ที่นิสิตใช้เป็นพื้นฐานในการทำงาน ไม่ต้องเขียนระบบใหม่ทั้งหมด
+      </p>
+      <h3>3.2 งานที่ต้องทำ</h3>
+      <p>
+        ส่วนที่ 2 เป็นโจทย์ปฏิบัติ 3 ข้อ รวม 15 คะแนน (โจทย์ที่ 1: 6 คะแนน,
+        โจทย์ที่ 2: 4 คะแนน, โจทย์ที่ 3: 5 คะแนน)
+        รายละเอียดโจทย์และข้อกำหนดการแก้ไฟล์ดูในกระดาษข้อสอบในวันสอบ
+      </p>
+      <h3>3.3 การส่งงาน</h3>
+      <ul>
+        <li>ส่วนที่ 1 ทำใน google classroom</li>
+        <li>
+          ส่วนที่ 2 ส่งตามรูปแบบที่กำหนดในข้อสอบ ไม่ต้องส่งไฟล์
+          <code>.env</code> และโฟลเดอร์ <code>node_modules</code>
+        </li>
+      </ul>
+      <h3>3.4 การติดตั้งและทดสอบสภาพแวดล้อม</h3>
+      <p>
+        ก่อนวันสอบ จะแจกไฟล์ <code>final-exam-setup.zip</code> ในวันเสาร์ที่ 31
+        ตุลาคม 2569 ผ่าน Google Classroom ของรายวิชา
+        ให้นิสิตติดตั้งและทดสอบเครื่องล่วงหน้า ไฟล์นี้มีเฉพาะการติดตั้ง
+        ไม่มีโจทย์ของข้อสอบ
+      </p>
+      <ol>
+        <li>แตกไฟล์ <code>final-exam-setup.zip</code> ในโฟลเดอร์ว่าง</li>
+        <li>
+          ทำตามขั้นตอนในไฟล์ <code>README-setup.md</code> ที่อยู่ในไฟล์ zip
+        </li>
+        <li>
+          ผลที่ควรได้: <code>npm run check</code> แสดงว่าเชื่อมต่อฐานข้อมูลได้
+          และ <code>npm test</code> ผ่านทั้ง 3 เทสต์
+        </li>
+      </ol>
+      <p>
+        ชุดโจทย์เต็มของข้อสอบจะดาวน์โหลดในวันสอบจาก Google Classroom ของรายวิชา
+      </p>
+      <h2>4. วิธีเตรียมตัว</h2>
+      <ul>
+        <li>ทบทวนเอกสารบรรยายสัปดาห์ที่ 9–14 สำหรับส่วนที่ 1</li>
+        <li>
+          ทบทวนเอกสารบรรยายและปฏิบัติการสัปดาห์ที่ 5–12 สำหรับส่วนที่ 2
+          (open-book)
+        </li>
+        <li>
+          ฝึกเขียนและรันเทสต์ด้วย Jest ก่อนวันสอบ ลองทำขั้นตอนเตรียมเครื่องในข้อ
+          3.4 ให้ผ่านอย่างน้อยหนึ่งครั้ง
+        </li>
+        <li>ตรวจว่าเครื่องที่จะใช้สอบมี Docker Desktop และ Node.js</li>
+      </ul>
+      <h2>5. ข้อแนะนำระหว่างสอบ</h2>
+      <ul>
+        <li>เขียนการยืนยันผลในเทสต์ให้ชัดเจน</li>
+        <li>อ่าน error ของ Jest ให้ครบก่อนแก้</li>
+        <li>อธิบายสาเหตุด้วยประโยคของตัวเอง</li>
+        <li>
+          จัดเวลาคร่าว ๆ ส่วนที่ 1 ประมาณ 50 นาที ส่วนที่ 2 ประมาณ 60 นาที
+          ที่เหลือไว้ตรวจทาน
+        </li>
+      </ul>
+    </main>
+  </body>
+</html>

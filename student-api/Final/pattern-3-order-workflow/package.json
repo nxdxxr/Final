@@ -1,0 +1,13 @@
+{
+  "name": "final-exam-pattern-3",
+  "version": "1.0.0",
+  "private": true,
+  "description": "แนวข้อสอบปฏิบัติปลายภาค รูปแบบที่ 3: Complex JOIN, Order Status State Machine & Order Cancellation",
+  "scripts": {
+    "test": "jest tests/pattern3.test.js"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}
+

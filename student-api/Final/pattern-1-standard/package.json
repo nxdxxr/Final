@@ -1,0 +1,13 @@
+{
+  "name": "final-exam-pattern-1",
+  "version": "1.0.0",
+  "private": true,
+  "description": "แนวข้อสอบปฏิบัติปลายภาค รูปแบบที่ 1: CRUD, Pagination, JWT Auth & Transaction Ordering",
+  "scripts": {
+    "test": "jest tests/pattern1.test.js"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}
+
